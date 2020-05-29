@@ -15,7 +15,7 @@ A mobile application built using flutter to translate the text typed or text rec
 <br />
 
 ### Translate by typing or pasting text
-features included
+
 - more than 100 languages supported
 - copy and paste to clipboard options to make translations easy
 - text to speech option
