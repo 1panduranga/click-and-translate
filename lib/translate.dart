@@ -2,19 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:translator/translator.dart';
 import 'package:flutter_text_to_speech/flutter_text_to_speech.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:speech_to_text/speech_recognition_error.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-
-   
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'dart:io';
 
 class Translate extends StatefulWidget {
-
+  final File image;
+  final bool  img;
+  Translate({this.image, this.img});
   @override
   _TranslateState createState() => _TranslateState();
+   
+  
 }
 
 class _TranslateState extends State<Translate> {
+ @override
+  void initState() {
+    super.initState();
+    print("**************************************************************************init ");
+    if(widget.img==true)
+    {
+      print("**************************************************************************init success");
+      textTranslate();
+    }
+  }
+
+
+  void textTranslate()async {
+    try{
+    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(widget.image);
+    final TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
+    final VisionText visionText = await textRecognizer.processImage(visionImage);
+    print("************************************************************************* got text");
+    setState(() {
+      inputText= visionText.text;
+      txt.text=visionText.text;
+    }); 
+    textRecognizer.close();
+    }
+    catch (e){
+      print("%^%^%%^%^%^%^%^%^%^%^%^%^%^%^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5 $e");
+    }
+    
+    print("**************************************************************************getting translation");
+    await getTranslation();
+    setState(() {
+      display=true;
+      copied=false;
+    });
+    print("**************************************************************************got translation");
+    
+  }
 
   Divider divide= Divider(
             color: Colors.grey,
@@ -27,6 +65,8 @@ class _TranslateState extends State<Translate> {
  String copyHint="copy to clipboard";
 VoiceController controller = FlutterTextToSpeech.instance.voiceController();
 
+
+
 Future paste() async{
 
       ClipboardData data= await Clipboard.getData("text/plain");
@@ -37,21 +77,8 @@ Future paste() async{
 
 }
 
-Future sound() async{
-   try{
-     print(outputText);
-    controller.init().then((_) {
-      controller.speak(
-          outputText, VoiceControllerOptions(delay: 0));
-    });
-  }
-  catch(e){
-    print(e);
-  }
-
-}
-
- Future getTranslation() async{
+Future getTranslation() async{
+  Navigator.pushNamed(context,'/loading');
    try{
      setState(() {
        outputText="";
@@ -69,7 +96,24 @@ Future sound() async{
       outputText="Something went wrong.Try again";
     });
    }
+   Navigator.pop(context);
  }
+ 
+Future sound() async{
+   try{
+     print(outputText);
+    controller.init().then((_) {
+      controller.speak(
+          outputText, VoiceControllerOptions(delay: 0));
+    });
+  }
+  catch(e){
+    print(e);
+  }
+
+}
+
+ 
 
 
   void copy(){ 
@@ -225,13 +269,13 @@ Future sound() async{
               ),
                RaisedButton.icon(
              onPressed: () async {
-               Navigator.pushNamed(context,'/loading');
+               
                await getTranslation();
                setState(() {
                  display=true;
                  copied=false;
                });
-               Navigator.pop(context);
+               
              },
             icon:Icon(Icons.translate),
             color:Colors.grey[300],

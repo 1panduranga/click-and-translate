@@ -1,7 +1,6 @@
 import 'package:snap_and_translate/help.dart';
 import 'package:snap_and_translate/loading.dart';
 import 'package:snap_and_translate/translate.dart';
-import 'package:snap_and_translate/vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -23,7 +22,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  File _image;
 
   Future getImage (bool isCamera) async{
     File image;
@@ -34,9 +32,13 @@ class _MyAppState extends State<MyApp> {
     else{
       image= await ImagePicker.pickImage( source:ImageSource.gallery);
     }
-    setState(() {
-      _image=image;
-    });
+    print("************************************************************ called");
+    Translate(image:image,img:true);
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Translate(image:image,img:true),
+    ));
   }
   @override
   Widget build(BuildContext context) {
