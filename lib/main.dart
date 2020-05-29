@@ -1,11 +1,13 @@
-import 'package:click_and_translate/help.dart';
-import 'package:click_and_translate/loading.dart';
-import 'package:click_and_translate/translate.dart';
+import 'package:snap_and_translate/help.dart';
+import 'package:snap_and_translate/loading.dart';
+import 'package:snap_and_translate/translate.dart';
+import 'package:snap_and_translate/vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 void main() => runApp(MaterialApp(
+  debugShowCheckedModeBanner: false,
   routes: {
     '/':(context)=> MyApp(),
     '/help':(context)=>Help(),
@@ -27,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     File image;
     if(isCamera)
     {
-      image= await ImagePicker.pickImage( source:ImageSource.camera);
+      image= await ImagePicker.pickImage( source:ImageSource.camera);     
     }
     else{
       image= await ImagePicker.pickImage( source:ImageSource.gallery);
